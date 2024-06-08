@@ -1,0 +1,32 @@
+{
+  "name": "rxjs-learning-with-jest-marbles",
+  "version": "1.0.0",
+  "description": "RxJS learning with jest-marbles",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nagyattis81/rxjs-learning-with-jest-marbles.git"
+  },
+  "keywords": [
+    "rxjs",
+    "jest",
+    "jest-marbles"
+  ],
+  "author": "Nagy Attila (aha)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nagyattis81/rxjs-learning-with-jest-marbles/issues"
+  },
+  "homepage": "https://github.com/nagyattis81/rxjs-learning-with-jest-marbles#readme",
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "jest-marbles": "^3.0.6",
+    "rxjs": "^7.8.1",
+    "ts-jest": "^29.1.4",
+    "typescript": "^5.4.5"
+  }
+}
