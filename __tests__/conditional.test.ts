@@ -7,8 +7,8 @@ describe("Conditional", () => {
   });
 
   it("every", () => {
-    const source = cold("abcde|", { a: 1, b: 2, c: 3, d: 4, e: 5 });
-    const expected$ = cold("---(a|)", { a: false });
+    const source = cold("    abcde|", { a: 1, b: 2, c: 3, d: 4, e: 5 });
+    const expected$ = cold(" ---(a|)", { a: false });
     expect(source.pipe(every((value) => value < 4))).toBeObservable(expected$);
   });
 

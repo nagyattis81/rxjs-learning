@@ -75,8 +75,8 @@ describe("Transformation", () => {
       source$,
       (value) => value % 2 === 0
     );
-    expect(evenObservable$).toBeObservable(cold("-a-b|", { a: 2, b: 4 }));
-    expect(oddObservable$).toBeObservable(cold("a-b-|", { a: 1, b: 3 }));
+    expect(evenObservable$).toBeObservable(cold(" -a-b|", { a: 2, b: 4 }));
+    expect(oddObservable$).toBeObservable(cold("  a-b-|", { a: 1, b: 3 }));
   });
 
   xit("pluck", () => {
@@ -93,9 +93,9 @@ describe("Transformation", () => {
 
   it("switchMap", () => {
     const values = { a: 1, b: 2, x: 3, y: 4 };
-    const source1$ = cold("a-b|", values);
-    const source2$ = cold("-x-y|", values);
-    const expected$ = cold("-a-b-c|", {
+    const source1$ = cold("  a-b|", values);
+    const source2$ = cold("  -x-y|", values);
+    const expected$ = cold(" -a-b-c|", {
       a: values.x,
       b: values.x,
       c: values.y,

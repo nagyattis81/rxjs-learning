@@ -1,6 +1,5 @@
 import { cold } from "jest-marbles";
 import {
-  Observable,
   distinctUntilChanged,
   filter,
   first,
@@ -37,8 +36,8 @@ describe("Filtering", () => {
 
   it("distinctUntilChanged", () => {
     const values = { a: 1, b: 1, c: 2, d: 2, e: 2, f: 3 };
-    const source$: Observable<number> = cold("abcdef|", values);
-    const expected$ = cold("a-b--c|)", {
+    const source$ = cold("   abcdef|", values);
+    const expected$ = cold(" a-b--c|)", {
       a: values.a,
       b: values.c,
       c: values.f,
@@ -52,8 +51,8 @@ describe("Filtering", () => {
 
   it("filter", () => {
     const values = { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6 };
-    const source$: Observable<number> = cold("abcdef|", values);
-    const expected$ = cold("---d-f|", values);
+    const source$ = cold("   abcdef|", values);
+    const expected$ = cold(" ---d-f|", values);
     expect(
       source$.pipe(
         filter((value: number): boolean => value > 2),
@@ -68,8 +67,8 @@ describe("Filtering", () => {
 
   it("first", () => {
     const values = { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6 };
-    const source$: Observable<number> = cold("abcdef|", values);
-    const expected$ = cold("(a|)", values);
+    const source$ = cold("   abcdef|", values);
+    const expected$ = cold(" (a|)", values);
     expect(source$.pipe(first())).toBeObservable(expected$);
   });
 
@@ -79,8 +78,8 @@ describe("Filtering", () => {
 
   it("last", () => {
     const values = { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6 };
-    const source$: Observable<number> = cold("abcdef|", values);
-    const expected$ = cold("------(f|)", values);
+    const source$ = cold("   abcdef|", values);
+    const expected$ = cold(" ------(f|)", values);
     expect(source$.pipe(last())).toBeObservable(expected$);
   });
 
@@ -94,23 +93,23 @@ describe("Filtering", () => {
 
   it("skip", () => {
     const values = { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6 };
-    const source$: Observable<number> = cold("abcdef|", values);
-    const expected$ = cold("---def|)", values);
+    const source$ = cold("   abcdef|", values);
+    const expected$ = cold(" ---def|)", values);
     expect(source$.pipe(skip(3))).toBeObservable(expected$);
   });
 
   it("skipUntil", () => {
     const values = { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6 };
-    const source1$: Observable<number> = cold("abcdef|", values);
-    const source2$: Observable<number> = cold("---d--|", values);
-    const expected$ = cold("---def|)", values);
+    const source1$ = cold("  abcdef|", values);
+    const source2$ = cold("  ---d--|", values);
+    const expected$ = cold(" ---def|)", values);
     expect(source1$.pipe(skipUntil(source2$))).toBeObservable(expected$);
   });
 
   it("skipWhile", () => {
     const values = { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6 };
-    const source$: Observable<number> = cold("abcdef|", values);
-    const expected$ = cold("--cdef|)", values);
+    const source$ = cold("   abcdef|", values);
+    const expected$ = cold(" --cdef|)", values);
     expect(
       source$.pipe(skipWhile((value: number) => value <= 2))
     ).toBeObservable(expected$);
@@ -118,30 +117,30 @@ describe("Filtering", () => {
 
   it("take", () => {
     const values = { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6 };
-    const source$: Observable<number> = cold("abcdef|", values);
-    const expected$ = cold("a(b|)", values);
+    const source$ = cold("   abcdef|", values);
+    const expected$ = cold(" a(b|)", values);
     expect(source$.pipe(take(2))).toBeObservable(expected$);
   });
 
   it("takeLast", () => {
     const values = { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6 };
-    const source$: Observable<number> = cold("abcdef|", values);
-    const expected$ = cold("------(ef|)", values);
+    const source$ = cold("   abcdef|", values);
+    const expected$ = cold(" ------(ef|)", values);
     expect(source$.pipe(takeLast(2))).toBeObservable(expected$);
   });
 
   it("takeUntil", () => {
     const values = { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6 };
-    const source$: Observable<number> = cold("abcdef|", values);
-    const destroy$: Observable<number> = cold("--(a|)", values);
-    const expected$ = cold("ab|", values);
+    const source$ = cold("   abcdef|", values);
+    const destroy$ = cold("  --(a|)", values);
+    const expected$ = cold(" ab|", values);
     expect(source$.pipe(takeUntil(destroy$))).toBeObservable(expected$);
   });
 
   it("takeWhile", () => {
     const values = { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6 };
-    const source$: Observable<number> = cold("abcdef|", values);
-    const expected$ = cold("abcd|", values);
+    const source$ = cold("   abcdef|", values);
+    const expected$ = cold(" abcd|", values);
     expect(
       source$.pipe(takeWhile((value: number) => value <= 4))
     ).toBeObservable(expected$);
