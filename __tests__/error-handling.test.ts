@@ -15,4 +15,8 @@ describe("Error Handling", () => {
     const expected$ = cold(" ababab#)");
     expect(source$.pipe(retry(2))).toBeObservable(expected$);
   });
+
+  xit("retryWhen", () => {
+    // TODO
+  });
 });

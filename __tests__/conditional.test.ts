@@ -23,4 +23,8 @@ describe("Conditional", () => {
       source$.pipe(mergeMap((v) => iif(() => v % 2 === 0, r$, x$)))
     ).toBeObservable(expected$);
   });
+
+  xit("sequenceEqual", () => {
+    // TODO
+  });
 });

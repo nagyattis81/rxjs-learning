@@ -1,5 +1,16 @@
 import { cold } from "jest-marbles";
-import { map, partition, switchMap } from "rxjs";
+import {
+  groupBy,
+  map,
+  mapTo,
+  mergeMap,
+  partition,
+  pluck,
+  reduce,
+  scan,
+  switchMap,
+  toArray,
+} from "rxjs";
 
 describe("Transformation", () => {
   xit("buffer", () => {
@@ -38,8 +49,27 @@ describe("Transformation", () => {
     // TODO
   });
 
-  xit("groupBy", () => {
-    // TODO
+  it("groupBy", () => {
+    const source$ = cold("abcd|", {
+      a: { name: "Sue", age: 25 },
+      b: { name: "Joe", age: 30 },
+      c: { name: "Frank", age: 25 },
+      d: { name: "Sarah", age: 35 },
+    });
+    const expected$ = cold("----(abc|", {
+      a: [
+        { name: "Sue", age: 25 },
+        { name: "Frank", age: 25 },
+      ],
+      b: [{ name: "Joe", age: 30 }],
+      c: [{ name: "Sarah", age: 35 }],
+    });
+    expect(
+      source$.pipe(
+        groupBy((value) => value.age),
+        mergeMap((group) => group.pipe(toArray()))
+      )
+    ).toBeObservable(expected$);
   });
 
   it("map", () => {
@@ -57,8 +87,9 @@ describe("Transformation", () => {
     ).toBeObservable(expected$);
   });
 
-  xit("mapTo", () => {
-    // TODO
+  it("mapTo", () => {
+    expect(cold("1234|").pipe(mapTo("*"))).toBeObservable(cold("****|"));
+    expect(cold("1234|").pipe(map(() => "*"))).toBeObservable(cold("****|"));
   });
 
   xit("mergeMap", () => {
@@ -79,16 +110,54 @@ describe("Transformation", () => {
     expect(oddObservable$).toBeObservable(cold("  a-b-|", { a: 1, b: 3 }));
   });
 
-  xit("pluck", () => {
-    // TODO
+  it("pluck", () => {
+    const source$ = cold("abcd|", {
+      a: { name: "Sue", age: 25 },
+      b: { name: "Joe", age: 30 },
+      c: { name: "Frank", age: 25 },
+      d: { name: "Sarah", age: 35 },
+    });
+    expect(source$.pipe(pluck("name"))).toBeObservable(
+      cold("abcd|", { a: "Sue", b: "Joe", c: "Frank", d: "Sarah" })
+    );
+    expect(source$.pipe(map((value) => value.name))).toBeObservable(
+      cold("abcd|", { a: "Sue", b: "Joe", c: "Frank", d: "Sarah" })
+    );
   });
 
-  xit("reduce", () => {
-    // TODO
+  it("reduce", () => {
+    const values = {
+      a: 1,
+      b: 2,
+      c: 3,
+      d: 4,
+    };
+    const source$ = cold("  abcd|", values);
+    const expected$ = cold("----(a|", {
+      a: values.a + values.b + values.c + values.d,
+    });
+    expect(source$.pipe(reduce((acc, val) => acc + val))).toBeObservable(
+      expected$
+    );
   });
 
-  xit("scan", () => {
-    // TODO
+  it("scan", () => {
+    const values = {
+      a: 1,
+      b: 2,
+      c: 3,
+      d: 4,
+    };
+    const source$ = cold("  abcd|", values);
+    const expected$ = cold("abcd|", {
+      a: 1,
+      b: 1 + 2,
+      c: 3 + 3,
+      d: 6 + 4,
+    });
+    expect(source$.pipe(scan((acc, curr) => acc + curr, 0))).toBeObservable(
+      expected$
+    );
   });
 
   it("switchMap", () => {
@@ -107,8 +176,10 @@ describe("Transformation", () => {
     // TODO
   });
 
-  xit("toArray", () => {
-    // TODO
+  it("toArray", () => {
+    expect(cold("abcd|").pipe(toArray())).toBeObservable(
+      cold("----(a|", { a: ["a", "b", "c", "d"] })
+    );
   });
 
   xit("window", () => {
