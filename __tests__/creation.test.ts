@@ -1,33 +1,38 @@
 import { Scheduler, cold, time } from "jest-marbles";
-import { EMPTY, interval, of, range, take, throwError, timer } from "rxjs";
+import {
+  EMPTY,
+  defer,
+  from,
+  generate,
+  interval,
+  of,
+  range,
+  take,
+  throwError,
+  timer,
+} from "rxjs";
 
 describe("Creation", () => {
-  xit("ajax", () => {
-    // TODO
-  });
-
-  xit("create", () => {
-    // TODO
-  });
-
-  xit("defer", () => {
-    // TODO
+  it("defer", () => {
+    expect(defer(() => of(1, "A", 2, "B"))).toBeObservable(cold("(1A2B|"));
   });
 
   it("EMPTY", () => {
     expect(EMPTY).toBeObservable(cold("|"));
   });
 
-  xit("from", () => {
-    // TODO
+  it("from", () => {
+    expect(from([1, "A", 3, 4])).toBeObservable(cold("(1A34|"));
   });
 
-  xit("fromEvent", () => {
-    // TODO
-  });
-
-  xit("generate", () => {
-    // TODO
+  it("generate", () => {
+    const result$ = generate(
+      0,
+      (x) => x < 3,
+      (x) => x + 1,
+      (x) => x
+    );
+    expect(result$).toBeObservable(cold("(012|"));
   });
 
   it("interval", () => {

@@ -1,5 +1,5 @@
 import { cold } from "jest-marbles";
-import { defaultIfEmpty, every, iif, mergeMap, of } from "rxjs";
+import { defaultIfEmpty, every, iif, mergeMap, of, sequenceEqual } from "rxjs";
 
 describe("Conditional", () => {
   it("defaultIfEmpty", () => {
@@ -24,7 +24,10 @@ describe("Conditional", () => {
     ).toBeObservable(expected$);
   });
 
-  xit("sequenceEqual", () => {
-    // TODO
+  it("sequenceEqual", () => {
+    const source1$ = cold("  -b-c-d-e-f-g-|");
+    const source2$ = cold("  ---b-c-def---g-|");
+    const expected$ = cold(" ---------------(a|", { a: true });
+    expect(source1$.pipe(sequenceEqual(source2$))).toBeObservable(expected$);
   });
 });

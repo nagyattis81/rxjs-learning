@@ -9,6 +9,7 @@ import {
   Notification,
   of,
   dematerialize,
+  timeInterval,
 } from "rxjs";
 
 describe("Utility", () => {
@@ -49,10 +50,6 @@ describe("Utility", () => {
     });
   });
 
-  xit("let", () => {
-    // TODO
-  });
-
   it("repeat", () => {
     expect(cold("a|").pipe(repeat(3))).toBeObservable(cold("aaa|"));
   });
@@ -64,19 +61,15 @@ describe("Utility", () => {
     expect(source2$.pipe(repeatWhen(() => source1$))).toBeObservable(expected$);
   });
 
-  xit("timeInterval", () => {
-    // TODO
-  });
-
-  xit("timeout", () => {
-    // TODO
-  });
-
-  xit("timeoutWith", () => {
-    // TODO
-  });
-
-  xit("toPromise", () => {
-    // TODO
+  it("timeInterval", () => {
+    const source$ = cold("-a-b-c|");
+    const expected$ = cold("-a-b-c|", {
+      a: { interval: 10, value: "a" },
+      b: { interval: 20, value: "b" },
+      c: { interval: 20, value: "c" },
+    });
+    expect(source$.pipe(timeInterval(Scheduler.get()))).toBeObservable(
+      expected$
+    );
   });
 });

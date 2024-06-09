@@ -1,5 +1,5 @@
 import { cold } from "jest-marbles";
-import { catchError, of, retry } from "rxjs";
+import { catchError, of, retry, retryWhen } from "rxjs";
 
 describe("Error Handling", () => {
   it("catchError", () => {
@@ -16,7 +16,10 @@ describe("Error Handling", () => {
     expect(source$.pipe(retry(2))).toBeObservable(expected$);
   });
 
-  xit("retryWhen", () => {
-    // TODO
+  it("retryWhen", () => {
+    const source1$ = cold("  ab#");
+    const source2$ = cold("  ---r---r-|");
+    const expected$ = cold(" ab---ab--ab|");
+    expect(source1$.pipe(retryWhen(() => source2$))).toBeObservable(expected$);
   });
 });
