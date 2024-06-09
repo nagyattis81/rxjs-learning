@@ -1,15 +1,17 @@
-import { cold } from "jest-marbles";
+import { Scheduler, cold, time } from "jest-marbles";
 import {
+  buffer,
+  bufferCount,
+  bufferTime,
   concatMap,
   exhaustMap,
   expand,
   groupBy,
   map,
-  mapTo,
   mergeMap,
+  mergeScan,
   of,
   partition,
-  pluck,
   reduce,
   scan,
   switchMap,
@@ -18,24 +20,37 @@ import {
 } from "rxjs";
 
 describe("Transformation", () => {
-  xit("buffer", () => {
-    // TODO
+  it("buffer", () => {
+    const source$ = cold("  abcdefghi|");
+    const inner$ = cold("   ---a----b|");
+    const expected$ = cold("---a----b(c|", {
+      a: ["a", "b", "c", "d"],
+      b: ["e", "f", "g", "h", "i"],
+      c: [],
+    });
+    expect(source$.pipe(buffer(inner$))).toBeObservable(expected$);
   });
 
-  xit("bufferCount", () => {
-    // TODO
+  it("bufferCount", () => {
+    const source$ = cold("  abcdefghi|");
+    const expected$ = cold("--a--b--c|", {
+      a: ["a", "b", "c"],
+      b: ["d", "e", "f"],
+      c: ["g", "h", "i"],
+    });
+    expect(source$.pipe(bufferCount(3))).toBeObservable(expected$);
   });
 
-  xit("bufferTime", () => {
-    // TODO
-  });
-
-  xit("bufferToggle", () => {
-    // TODO
-  });
-
-  xit("bufferWhen", () => {
-    // TODO
+  it("bufferTime", () => {
+    const source$ = cold("  abcdefghi|");
+    const expected$ = cold("---a--b--(c|", {
+      a: ["a", "b", "c"],
+      b: ["d", "e", "f", "g"],
+      c: ["h", "i"],
+    });
+    expect(
+      source$.pipe(bufferTime(time("---|"), Scheduler.get()))
+    ).toBeObservable(expected$);
   });
 
   it("concatMap", () => {
@@ -43,10 +58,6 @@ describe("Transformation", () => {
     const inner$ = cold("    1234|");
     const expected$ = cold(" -12341234123412341234|");
     expect(source$.pipe(concatMap(() => inner$))).toBeObservable(expected$);
-  });
-
-  xit("concatMapTo", () => {
-    // TODO
   });
 
   it("exhaustMap", () => {
@@ -105,11 +116,6 @@ describe("Transformation", () => {
     ).toBeObservable(expected$);
   });
 
-  it("mapTo", () => {
-    expect(cold("1234|").pipe(mapTo("*"))).toBeObservable(cold("****|"));
-    expect(cold("1234|").pipe(map(() => "*"))).toBeObservable(cold("****|"));
-  });
-
   it("mergeMap", () => {
     const source$ = cold("   -a---b---c-d-e|");
     const inner$ = cold("    12|");
@@ -117,8 +123,12 @@ describe("Transformation", () => {
     expect(source$.pipe(mergeMap(() => inner$))).toBeObservable(expected$);
   });
 
-  xit("mergeScan", () => {
-    // TODO
+  it("mergeScan", () => {
+    const source$ = cold("  abcd|", { a: 1, b: 1, c: 1, d: 1 });
+    const expected$ = cold("1234|");
+    expect(
+      source$.pipe(mergeScan((acc, val) => of(acc + val), 0))
+    ).toBeObservable(expected$);
   });
 
   it("partition", () => {
@@ -129,21 +139,6 @@ describe("Transformation", () => {
     );
     expect(evenObservable$).toBeObservable(cold(" -a-b|", { a: 2, b: 4 }));
     expect(oddObservable$).toBeObservable(cold("  a-b-|", { a: 1, b: 3 }));
-  });
-
-  it("pluck", () => {
-    const source$ = cold("abcd|", {
-      a: { name: "Sue", age: 25 },
-      b: { name: "Joe", age: 30 },
-      c: { name: "Frank", age: 25 },
-      d: { name: "Sarah", age: 35 },
-    });
-    expect(source$.pipe(pluck("name"))).toBeObservable(
-      cold("abcd|", { a: "Sue", b: "Joe", c: "Frank", d: "Sarah" })
-    );
-    expect(source$.pipe(map((value) => value.name))).toBeObservable(
-      cold("abcd|", { a: "Sue", b: "Joe", c: "Frank", d: "Sarah" })
-    );
   });
 
   it("reduce", () => {
@@ -188,33 +183,9 @@ describe("Transformation", () => {
     expect(source$.pipe(switchMap(() => inner$))).toBeObservable(expected$);
   });
 
-  xit("switchMapTo", () => {
-    // TODO
-  });
-
   it("toArray", () => {
     expect(cold("abcd|").pipe(toArray())).toBeObservable(
       cold("----(a|", { a: ["a", "b", "c", "d"] })
     );
-  });
-
-  xit("window", () => {
-    // TODO
-  });
-
-  xit("windowCount", () => {
-    // TODO
-  });
-
-  xit("windowTime", () => {
-    // TODO
-  });
-
-  xit("windowToggle", () => {
-    // TODO
-  });
-
-  xit("windowWhen", () => {
-    // TODO
   });
 });

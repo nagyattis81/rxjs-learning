@@ -19,22 +19,6 @@ import {
 } from "rxjs";
 
 describe("Filtering", () => {
-  xit("audit", () => {
-    // TODO
-  });
-
-  xit("auditTime", () => {
-    // TODO
-  });
-
-  xit("debounce", () => {
-    // TODO
-  });
-
-  xit("debounceTime", () => {
-    // TODO
-  });
-
   it("distinct", () => {
     const source$ = cold("  --1234512345|");
     const expected$ = cold("--12345-----|)");
@@ -93,10 +77,6 @@ describe("Filtering", () => {
     expect(cold("123456|").pipe(last())).toBeObservable(cold("------(6|)"));
   });
 
-  xit("sample", () => {
-    // TODO
-  });
-
   it("single", () => {
     expect(
       cold("abcdef|").pipe(single((value: string) => value === "d"))
@@ -149,13 +129,5 @@ describe("Filtering", () => {
     expect(
       source$.pipe(takeWhile((value: number) => value <= 4))
     ).toBeObservable(expected$);
-  });
-
-  xit("throttle", () => {
-    // TODO
-  });
-
-  xit("throttleTime", () => {
-    // TODO
   });
 });

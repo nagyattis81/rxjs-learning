@@ -13,10 +13,6 @@ import {
 } from "rxjs";
 
 describe("Combination", () => {
-  xit("combineAll", () => {
-    // TODO
-  });
-
   it("combineLatest", () => {
     const values = { a: 1, b: 2, x: 3, y: 4 };
     const source1$ = cold("  a-b|", values);
@@ -35,10 +31,6 @@ describe("Combination", () => {
     const source2$ = cold("    cd|", values);
     const expected$ = cold(" abcd|", values);
     expect(concat(source1$, source2$)).toBeObservable(expected$);
-  });
-
-  xit("concatAll", () => {
-    // TODO
   });
 
   it("endWith", () => {
@@ -63,10 +55,6 @@ describe("Combination", () => {
     const source2$ = cold("  --2--4|");
     const expected$ = cold(" 1-2-34|");
     expect(merge(source1$, source2$)).toBeObservable(expected$);
-  });
-
-  xit("mergeAll", () => {
-    // TODO
   });
 
   it("pairwise", () => {
