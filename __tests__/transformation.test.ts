@@ -1,5 +1,7 @@
 import { cold } from "jest-marbles";
 import {
+  concatMap,
+  exhaustMap,
   expand,
   groupBy,
   map,
@@ -36,16 +38,22 @@ describe("Transformation", () => {
     // TODO
   });
 
-  xit("concatMap", () => {
-    // TODO
+  it("concatMap", () => {
+    const source$ = cold("   -a---b---c-d-e|");
+    const inner$ = cold("    1234|");
+    const expected$ = cold(" -12341234123412341234|");
+    expect(source$.pipe(concatMap(() => inner$))).toBeObservable(expected$);
   });
 
   xit("concatMapTo", () => {
     // TODO
   });
 
-  xit("exhaustMap", () => {
-    // TODO
+  it("exhaustMap", () => {
+    const source$ = cold("   -a---b---c-d-e|");
+    const inner$ = cold("    1234|");
+    const expected$ = cold(" -1234----1234-|");
+    expect(source$.pipe(exhaustMap(() => inner$))).toBeObservable(expected$);
   });
 
   it("expand", () => {
@@ -102,8 +110,11 @@ describe("Transformation", () => {
     expect(cold("1234|").pipe(map(() => "*"))).toBeObservable(cold("****|"));
   });
 
-  xit("mergeMap", () => {
-    // TODO
+  it("mergeMap", () => {
+    const source$ = cold("   -a---b---c-d-e|");
+    const inner$ = cold("    12|");
+    const expected$ = cold(" -12--12--121212|");
+    expect(source$.pipe(mergeMap(() => inner$))).toBeObservable(expected$);
   });
 
   xit("mergeScan", () => {
@@ -171,8 +182,10 @@ describe("Transformation", () => {
   });
 
   it("switchMap", () => {
-    const switched$ = of(1, 2, 3).pipe(switchMap((x) => of(0, x + 1, x + 2)));
-    expect(switched$).toBeObservable(cold("(023034045|"));
+    const source$ = cold("   -a---b---c-d-e|");
+    const inner$ = cold("    123|");
+    const expected$ = cold(" -123-123-1212123|");
+    expect(source$.pipe(switchMap(() => inner$))).toBeObservable(expected$);
   });
 
   xit("switchMapTo", () => {
