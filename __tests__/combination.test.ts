@@ -32,7 +32,7 @@ describe("Combination", () => {
   it("concat", () => {
     const values = { a: 1, b: 2, c: 3, d: 4 };
     const source1$ = cold("  ab|", values);
-    const source2$ = cold("  cd|", values);
+    const source2$ = cold("    cd|", values);
     const expected$ = cold(" abcd|", values);
     expect(concat(source1$, source2$)).toBeObservable(expected$);
   });
@@ -59,10 +59,9 @@ describe("Combination", () => {
   });
 
   it("merge", () => {
-    const values = { a: 1, b: 2, x: 3, y: 4 };
-    const source1$ = cold("  a---b-|", values);
-    const source2$ = cold("  --x--y|", values);
-    const expected$ = cold(" a-x-by|", values);
+    const source1$ = cold("  1---3-|");
+    const source2$ = cold("  --2--4|");
+    const expected$ = cold(" 1-2-34|");
     expect(merge(source1$, source2$)).toBeObservable(expected$);
   });
 
@@ -71,41 +70,34 @@ describe("Combination", () => {
   });
 
   it("pairwise", () => {
-    const values = { a: 1, b: 2, c: 3, d: 4 };
-    const source$ = cold("   abcd|", values);
+    const source$ = cold("   1234|");
     const expected$ = cold(" -abc|", {
-      a: [values.a, values.b],
-      b: [values.b, values.c],
-      c: [values.c, values.d],
+      a: ["1", "2"],
+      b: ["2", "3"],
+      c: ["3", "4"],
     });
     expect(source$.pipe(pairwise())).toBeObservable(expected$);
   });
 
   it("race", () => {
-    const values = { a: 1, b: 2, x: 3, y: 4 };
-    const source1$ = cold("  a-b|", values);
-    const source2$ = cold("  -x-y|", values);
-    const expected$ = cold(" a-b|", {
-      a: values.a,
-      b: values.b,
-    });
+    const source1$ = cold("  1-3|");
+    const source2$ = cold("  -2-4|");
+    const expected$ = cold(" 1-3|");
     expect(race([source1$, source2$])).toBeObservable(expected$);
   });
 
   it("startWith", () => {
-    const values = { a: 1, b: 2, c: 3, d: 4 };
-    const source = cold("-bcd|", values);
-    const expected$ = cold("abcd|", values);
+    const source = cold("   -234|");
+    const expected$ = cold("1234|");
     expect(source.pipe(startWith(1))).toBeObservable(expected$);
   });
 
   it("withLatestFrom", () => {
-    const values = { a: 1, b: 2, c: 3, d: 4 };
-    const source1$ = cold("  ab|", values);
-    const source2$ = cold("  cd|", values);
+    const source1$ = cold("  12|");
+    const source2$ = cold("  34|");
     const expected$ = cold(" ab|", {
-      a: [values.a, values.c],
-      b: [values.b, values.d],
+      a: ["1", "3"],
+      b: ["2", "4"],
     });
     expect(source1$.pipe(withLatestFrom(source2$))).toBeObservable(expected$);
   });

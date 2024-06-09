@@ -1,14 +1,17 @@
 import { cold } from "jest-marbles";
 import {
+  expand,
   groupBy,
   map,
   mapTo,
   mergeMap,
+  of,
   partition,
   pluck,
   reduce,
   scan,
   switchMap,
+  take,
   toArray,
 } from "rxjs";
 
@@ -45,8 +48,15 @@ describe("Transformation", () => {
     // TODO
   });
 
-  xit("expand", () => {
-    // TODO
+  it("expand", () => {
+    const source$ = of(2);
+    const example$ = source$.pipe(
+      expand((val) => {
+        return of(1 + val);
+      }),
+      take(5)
+    );
+    expect(example$).toBeObservable(cold("(23456|"));
   });
 
   it("groupBy", () => {
@@ -161,15 +171,8 @@ describe("Transformation", () => {
   });
 
   it("switchMap", () => {
-    const values = { a: 1, b: 2, x: 3, y: 4 };
-    const source1$ = cold("  a-b|", values);
-    const source2$ = cold("  -x-y|", values);
-    const expected$ = cold(" -a-b-c|", {
-      a: values.x,
-      b: values.x,
-      c: values.y,
-    });
-    expect(source1$.pipe(switchMap(() => source2$))).toBeObservable(expected$);
+    const switched$ = of(1, 2, 3).pipe(switchMap((x) => of(0, x + 1, x + 2)));
+    expect(switched$).toBeObservable(cold("(023034045|"));
   });
 
   xit("switchMapTo", () => {
