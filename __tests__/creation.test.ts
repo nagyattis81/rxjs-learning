@@ -1,5 +1,5 @@
-import { cold } from "jest-marbles";
-import { EMPTY } from "rxjs";
+import { Scheduler, cold, time } from "jest-marbles";
+import { EMPTY, interval, of, range, take, throwError, timer } from "rxjs";
 
 describe("Creation", () => {
   xit("ajax", () => {
@@ -30,23 +30,25 @@ describe("Creation", () => {
     // TODO
   });
 
-  xit("interval", () => {
-    // TODO
+  it("interval", () => {
+    expect(interval(3, Scheduler.get()).pipe(take(3))).toBeObservable(
+      cold("01(2|")
+    );
   });
 
-  xit("of", () => {
-    // TODO
+  it("of", () => {
+    expect(of("H")).toBeObservable(cold("(H|"));
   });
 
-  xit("range", () => {
-    // TODO
+  it("range", () => {
+    expect(range(1, 9)).toBeObservable(cold("(123456789|"));
   });
 
-  xit("throw", () => {
-    // TODO
+  it("throw", () => {
+    expect(throwError(() => "error")).toBeObservable(cold("#"));
   });
 
-  xit("timer", () => {
-    // TODO
+  it("timer", () => {
+    expect(timer(time("---|"), Scheduler.get())).toBeObservable(cold("---(0|"));
   });
 });

@@ -2,9 +2,12 @@ import { cold } from "jest-marbles";
 import {
   combineLatest,
   concat,
+  endWith,
   forkJoin,
+  merge,
   pairwise,
   race,
+  startWith,
   withLatestFrom,
   zip,
 } from "rxjs";
@@ -38,8 +41,11 @@ describe("Combination", () => {
     // TODO
   });
 
-  xit("endWith", () => {
-    // TODO
+  it("endWith", () => {
+    const values = { a: 1, b: 2, c: 3, d: 4 };
+    const source = cold("abc|", values);
+    const expected$ = cold("abc(d|", values);
+    expect(source.pipe(endWith(4))).toBeObservable(expected$);
   });
 
   it("forkJoin", () => {
@@ -52,8 +58,12 @@ describe("Combination", () => {
     expect(forkJoin([source1$, source2$])).toBeObservable(expected$);
   });
 
-  xit("merge", () => {
-    // TODO
+  it("merge", () => {
+    const values = { a: 1, b: 2, x: 3, y: 4 };
+    const source1$ = cold("  a---b-|", values);
+    const source2$ = cold("  --x--y|", values);
+    const expected$ = cold(" a-x-by|", values);
+    expect(merge(source1$, source2$)).toBeObservable(expected$);
   });
 
   xit("mergeAll", () => {
@@ -82,8 +92,11 @@ describe("Combination", () => {
     expect(race([source1$, source2$])).toBeObservable(expected$);
   });
 
-  xit("startWith", () => {
-    // TODO
+  it("startWith", () => {
+    const values = { a: 1, b: 2, c: 3, d: 4 };
+    const source = cold("-bcd|", values);
+    const expected$ = cold("abcd|", values);
+    expect(source.pipe(startWith(1))).toBeObservable(expected$);
   });
 
   it("withLatestFrom", () => {
