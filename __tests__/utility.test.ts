@@ -1,5 +1,15 @@
-import { cold } from "jest-marbles";
-import { finalize, tap } from "rxjs";
+import { Scheduler, cold, time } from "jest-marbles";
+import {
+  delay,
+  delayWhen,
+  finalize,
+  repeat,
+  repeatWhen,
+  tap,
+  Notification,
+  of,
+  dematerialize,
+} from "rxjs";
 
 describe("Utility", () => {
   it("tap", () => {
@@ -15,16 +25,21 @@ describe("Utility", () => {
     });
   });
 
-  xit("delay", () => {
-    // TODO
+  it("delay", () => {
+    expect(
+      cold("a|").pipe(delay(time("---|"), Scheduler.get()))
+    ).toBeObservable(cold("---(a|"));
   });
 
-  xit("delayWhen", () => {
-    // TODO
+  it("delayWhen", () => {
+    expect(cold("a|").pipe(delayWhen(() => cold("---b|")))).toBeObservable(
+      cold("---(a|")
+    );
   });
 
-  xit("dematerialize", () => {
-    // TODO
+  it("dematerialize", () => {
+    const source1$ = of(Notification.createNext("a")).pipe(dematerialize());
+    expect(source1$).toBeObservable(cold("(a|"));
   });
 
   it("finalize", () => {
@@ -38,12 +53,15 @@ describe("Utility", () => {
     // TODO
   });
 
-  xit("repeat", () => {
-    // TODO
+  it("repeat", () => {
+    expect(cold("a|").pipe(repeat(3))).toBeObservable(cold("aaa|"));
   });
 
-  xit("repeatWhen", () => {
-    // TODO
+  it("repeatWhen", () => {
+    const source1$ = cold("  ---a---a|");
+    const source2$ = cold("  ab|");
+    const expected$ = cold(" ab---ab--ab|");
+    expect(source2$.pipe(repeatWhen(() => source1$))).toBeObservable(expected$);
   });
 
   xit("timeInterval", () => {
